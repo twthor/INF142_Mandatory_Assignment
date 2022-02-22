@@ -5,7 +5,7 @@ Mandatory Assignment group 16: Tobias With Thorsen and Sofia Burkow.
 ## Project's purpose:
 The aim is to build an architecture that transform the game "Team Local Tactis" (TLT) from a local version to an distributed application that allows for online play between several clients, and change the name to "Team Network Tactics" (TNT).
 
-> TNT needs at least three processes that communicates oves the Internet:
+TNT needs at least three processes that communicates oves the Internet:
 >  - A database for storing champions and stats
 >  - A server running the logic of the game
 >  - A client for the players.
