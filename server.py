@@ -2,7 +2,7 @@
 from socket import socket
 
 sock = socket()
-sock.bind(('localhost', 5555))
+sock.bind(('localhost', 5550))
 sock.listen()
 while True:
     connectionSock, _ = sock.accept()
