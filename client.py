@@ -10,4 +10,3 @@ sock.sendall(message.encode())
 response = sock.recv(2048).decode()
 print('From server:', response)
 sock.close()
-# 2nd test
