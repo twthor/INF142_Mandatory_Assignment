@@ -9,13 +9,14 @@ import os
 print(pymongo.version)
 
 # Get you password from .env file
-password = os.environ.get("password")
+password = os.environ.get("PASSWORD")
 username = "admin"
-clusterName = "inf142-cluster-demo"
+clusterName = "inf142-ma"
+db_name = "TNT-db"
 
 # Connect to you cluster
-client = MongoClient('mongodb+srv://' + username + ':' + password + '@' + clusterName + '.67x6a.mongodb.net/demo-db?retryWrites=true&w=majority')
-
+# client = MongoClient('mongodb+srv://' + username + ':' + password + '@' + clusterName + '.3w00x.mongodb.net/TNT-db?retryWrites=true&w=majority')
+client = MongoClient("mongodb+srv://"+ username + ":" + password+ "@"+ clusterName + ".3w00x.mongodb.net/" + db_name + "?retryWrites=true&w=majority")
 # Create a new database in your cluster
 database = client.INF142
 
@@ -23,8 +24,8 @@ database = client.INF142
 person = database.person
 
 personDocument = {
-  "firstname": "Ola",
-  "lastname": "Nordmann",
+  "firstname": "Tobias",
+  "lastname": "Thorsen",
   "course": "INF142"
 }
 
