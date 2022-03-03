@@ -10,8 +10,6 @@ sock.connect(('localhost', 5550))
 #while True:
 message = sock.recv(2048).decode()
 print(message)
-#message = sock.recv(2048).decode()
-#print(message)
 # sock.sendall(message.encode())
 # response = sock.recv(2048).decode()
 # print('From server:', response)

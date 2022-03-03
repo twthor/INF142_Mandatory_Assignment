@@ -5,14 +5,8 @@ from rich.table import Table
 from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
 
-def welcomeMessage() -> str:
-    return ('\n'
-          'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!'
-          '\n'
-          'Each player choose a champion each time.'
-          '\n')
 
-def available_champs(champions: dict[Champion]) -> dict:
+def print_available_champs(champions: dict[Champion]) -> None:
 
     # Create a table containing available champions
     available_champs = Table(title='Available champions')
@@ -29,10 +23,6 @@ def available_champs(champions: dict[Champion]) -> dict:
         available_champs.add_row(*champion.str_tuple)
 
     return available_champs
-
-def return_available_champs() -> dict:
-    champions = load_some_champs()
-    return available_champs(champions)
 
 
 def input_champion(prompt: str,
@@ -100,7 +90,19 @@ def print_match_summary(match: Match) -> None:
         print('\nDraw :expressionless:')
 
 
+def welcome() -> str:
+    return ('\n'
+          'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!'
+          '\n'
+          'Each player choose a champion each time.'
+          '\n')
+
+
 def main() -> None:
+
+    champions = load_some_champs()
+    print_available_champs(champions)
+    print('\n')
 
     player1 = []
     player2 = []
