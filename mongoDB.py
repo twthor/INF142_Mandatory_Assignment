@@ -26,7 +26,7 @@ database = client.Champions
 # Create a new collection in you database
 champStats = database.Champions
 stats = {}
-
+  
 # databaseChamps = client.Champions
 def makeDict(filename, collectionName):
   newDict = {}

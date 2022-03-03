@@ -22,7 +22,7 @@ def print_available_champs(champions: dict[Champion]) -> None:
     for champion in champions.values():
         available_champs.add_row(*champion.str_tuple)
 
-    print(available_champs)
+    return available_champs
 
 
 def input_champion(prompt: str,
@@ -90,13 +90,15 @@ def print_match_summary(match: Match) -> None:
         print('\nDraw :expressionless:')
 
 
-def main() -> None:
-
-    print('\n'
+def welcome() -> str:
+    return ('\n'
           'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!'
           '\n'
           'Each player choose a champion each time.'
           '\n')
+
+
+def main() -> None:
 
     champions = load_some_champs()
     print_available_champs(champions)
