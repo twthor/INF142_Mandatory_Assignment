@@ -1,3 +1,4 @@
+from audioop import add
 import pymongo
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -5,10 +6,6 @@ load_dotenv()
 import os
 from socket import socket
 from threading import Thread
-
-sock = socket()
-sock.bind(('localhost', 5550))
-sock.listen()
 
 print(pymongo.version)
 
@@ -24,25 +21,31 @@ client = MongoClient("mongodb+srv://"+ username + ":" + password + "@"+ clusterN
 database = client.Champions
 
 # Create a new collection in you database
-champStats = database.Champions
+Champions = database.Champions
 stats = {}
 
 # databaseChamps = client.Champions
-def makeDict(filename, collectionName):
-  newDict = {}
-  with open(f"{filename}") as f:
-    for line in f:
-      line = line.split(",")
-      newDict[line[0]] = [line[1], line[2], line[3][:-1]]
-  database.collectionName.insert_one(newDict)
+def addChampions(championList):
+  newChampDict = {}
+  newChampDict[championList[0]] = [championList[1], championList[2], championList[3][:-1]]
+  database.Champions.update(newChampDict)
+  print(newChampDict)
+
+def main():
+  while userInput := input(">> Want to submit a champion? [Y/n] "):
+    if userInput == "Y":
+      newChampion = input(">> Type in this format: championName,stat1,stat2,stat3): ")
+      listNewChamp = newChampion.split(",")
+      addChampions(listNewChamp)
+      print("Champion added!")
+      break
+    else:
+      print(">> Shutting down..")
+      break
 
 
-# while True:
-#   connectionSock, _ = sock.accept()
-#   inputServer = connectionSock.recv(2048).decode()
-
-#   connectionSock.sendall(inputServer.encode())
-#   connectionSock.close()
+if __name__== "__main__":
+  main()
 
 
 
