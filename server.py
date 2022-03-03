@@ -1,5 +1,9 @@
 # Server side of TNT
 from socket import socket
+import champlistloader
+import core
+import teamLocalTactics
+from threading import Thread
 
 sock = socket()
 sock.bind(('localhost', 5550))

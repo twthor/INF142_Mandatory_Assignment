@@ -1,5 +1,5 @@
 import pymongo
-#import client
+# import client
 #import champlistloader
 
 from pymongo import MongoClient
@@ -13,24 +13,23 @@ print(pymongo.version)
 password = os.environ.get("PASSWORD")
 username = "admin"
 clusterName = "inf142-ma"
-db_name = "TNT-db"
 
-# Connect to you cluster
-client = MongoClient("mongodb+srv://"+ username + ":" + password+ "@"+ clusterName + ".3w00x.mongodb.net/" + db_name + "?retryWrites=true&w=majority")
+# Connect to your cluster
+client = MongoClient("mongodb+srv://"+ username + ":" + password + "@"+ clusterName + ".3w00x.mongodb.net/sample_airbnb?retryWrites=true&w=majority")
 
 # Create a new database in your cluster
-database = client.clusterName
-databaseChamps = client.Champions
-
+database = client.INF142
+# database = client.sample_airbnb
+# databaseChamps = client.Champions
 # Create a new collection in you database
 person = database.person
-champions = databaseChamps.champlistLoader
+# champions = databaseChamps.champsList
 
 personDocument = {
   "firstname": "Tobias",
   "lastname": "Thorsen",
   "course": "INF142"
 }
-
+print(personDocument)
 person.insert_one(personDocument)
-champions.insert_one(champlistloader)
+print(person.inserted_id)
