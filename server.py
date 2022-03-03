@@ -12,10 +12,13 @@ sock.listen()
 
 while True:
     #while user := input("Server>> "):
-    connectionSock, _ = sock.accept()
+    connectionSock, _ = sock.accept().decode()
     #available_champs = teamLocalTactics.print_available_champs()
-    welcomeMessage = teamLocalTactics.welcome()
+    welcomeMessage = teamLocalTactics.welcomeMessage()
     connectionSock.sendall(welcomeMessage.encode())
+    #champs = teamLocalTactics.return_available_champs()
+    #print(champs)
+    #connectionSock.send(champs)
     connectionSock.close()
 
 
