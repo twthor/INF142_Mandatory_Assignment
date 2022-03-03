@@ -2,6 +2,7 @@
 from socket import socket
 import teamLocalTactics
 from threading import Thread
+from rich import print
 
 sock = socket()
 sock.connect(('localhost', 5550))

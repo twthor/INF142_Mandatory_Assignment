@@ -23,7 +23,7 @@ database = client.Champions
 # Create a new collection in you database
 Champions = database.Champions
 stats = {}
-
+  
 # databaseChamps = client.Champions
 def addChampions(championList):
   newChampDict = {}
