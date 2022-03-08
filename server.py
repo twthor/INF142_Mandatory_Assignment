@@ -17,12 +17,21 @@ champions = load_some_champs()
 player1Champs = []
 player2Champs = []
 def addChamps(champ):
-    if (len(player1Champs)==2):
-        player2Champs.append(champ)
-        print("lagt til i player2 " + champ)
-    else:
-        player1Champs.append(champ)
-        print("lagt til i player1 " + champ)
+    separatedName = ""
+    for letter in champ:
+        if letter == "\n":
+            if (len(player1Champs)==2):
+                separatedName.rstrip()
+                player2Champs.append(separatedName)
+                print("lagt til i player2 " + separatedName)
+            else:
+                separatedName.rstrip()
+                player1Champs.append(separatedName)
+                print("lagt til i player1 " + separatedName)
+            # Makes it empty for new champion name
+            separatedName = ""
+        else:
+            separatedName += letter
 
 def startMatch(player1, player2):
     match = Match(
@@ -41,11 +50,7 @@ while True:
     for _ in range(4):
         champ = connectionSock.recv(1024).decode()
         addChamps(champ)
-        connectionSock.sendall(champ.encode("utf-8"))
-        
-    # champ = connectionSock.recv(2048).decode()
-    # player2Champs.append(champ)
-    # connectionSock.send(champ.encode())
+        connectionSock.sendall("Champions locked in!".encode("utf-8"))
 
     print(player1Champs)
     print(player2Champs)

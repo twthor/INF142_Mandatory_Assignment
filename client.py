@@ -21,8 +21,10 @@ for _ in range(2):
 
 # Sends champs to server
 for champ in player1:
+    champ +="\n"
     sock.sendall(champ.encode("utf-8"))
 for champ in player2:
+    champ +="\n"
     sock.sendall(champ.encode("utf-8"))
 
 # for _ in range(4):
