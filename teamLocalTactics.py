@@ -90,6 +90,14 @@ def print_match_summary(match: Match) -> None:
         print('\nDraw :expressionless:')
 
 
+def welcomeMessage():
+    return('\n'
+          'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!'
+          '\n'
+          'Each player choose a champion each time.'
+          '\n')
+
+
 def main() -> None:
 
     print('\n'
