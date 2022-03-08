@@ -4,8 +4,6 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 load_dotenv()
 import os
-from socket import socket
-from threading import Thread
 
 print(pymongo.version)
 
@@ -18,17 +16,18 @@ clusterName = "inf142-cluster"
 client = MongoClient("mongodb+srv://"+ username + ":" + password + "@"+ clusterName + ".mi4zj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
 # Create a new database in your cluster
-database = client.Champions
+#database = client.Champions
 
 # Create a new collection in you database
-Champions = database.Champions
-stats = {}
+champions = client.Champions.Champions
+
+#_id = ObjectId("622071c2c783b03eeaa139e3")
   
 # databaseChamps = client.Champions
-def addChampions(championList):
+def addChampions(championList : list):
   newChampDict = {}
   newChampDict[championList[0]] = [championList[1], championList[2], championList[3][:-1]]
-  database.Champions.update(newChampDict)
+  champions.update(newChampDict)
   print(newChampDict)
 
 def main():

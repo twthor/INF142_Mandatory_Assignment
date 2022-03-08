@@ -195,8 +195,10 @@ class Match:
 
     @property
     def score(self) -> tuple[int, int]:
+        print((self._red_score, self._blue_score))
         return (self._red_score, self._blue_score)
 
     @property
     def rounds(self) -> list[dict[str, PairThrow]]:
+        print(self._rounds)
         return self._rounds
