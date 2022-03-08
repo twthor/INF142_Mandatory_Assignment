@@ -1,5 +1,6 @@
 # Server side of TNT
 from importlib.resources import path
+from msilib import datasizemask
 from socket import create_server
 import socket
 from zoneinfo import available_timezones
@@ -12,6 +13,7 @@ from _thread import *
 
 # You can create a protocol on the serverside that handles the inputs.
 
+# ======== GAMMEL SOCKET ========
 # sock = create_server(('localhost', 5550)) #reuse_port=True
 # sock.listen()
 
@@ -21,12 +23,24 @@ from _thread import *
 def getChamps():
     db_sock = socket.socket()
     db_sock.connect(('localhost', 5555))
-    recv_champions = db_sock.recv(2048).decode()
-    #champions = json.loads(recv_champions)
-    db_sock.close()
-    return recv_champions
+    data_encoded = db_sock.recv(4096)
 
-ServerSideSocket = socket.socket()
+    data_string = data_encoded.decode(encoding="utf-8")
+    data_variable = json.loads(data_string)
+    
+    db_sock.close()
+    return data_variable
+
+class ProcessData:
+    process_id = 0
+    project_id = 0
+    task_id = 0
+    start_time = 0
+    end_time = 0
+    user_id = 0
+    weekend_id = 0
+
+ServerSideSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1'
 port = 5550
 ThreadCount = 0
@@ -38,11 +52,19 @@ print(">> Server is listening.. <<")
 ServerSideSocket.listen(5)
 
 def multi_threaded_client(connection):
-    connection.send(str.encode('Server is working..'))
+    #connection.send(str.encode('Server is working..'))
     while True:
-        data = connection.recv(2048)
-        if not data:
+        data_encoded = connection.recv(4096)
+        data_string = data_encoded.decode(encoding="utf-8")
+        if not data_encoded:
             break
+        
+        variable = ProcessData()
+        data_as_dict = vars(variable)
+        # Serialize dict object
+        data_string = json.dumps(data_as_dict)
+        # Send encoded object
+        ServerSideSocket.send(data_string.encode(encoding="utf-8"))
 
         welcome = teamLocalTactics.welcomeMessage()
         connection.sendall(str.encode(welcome))
@@ -60,6 +82,7 @@ while True:
     print('Thread Number: ' + str(ThreadCount))
 ServerSideSocket.close()
 
+#######=============== ALT UNDER HER ER DET GAMLE =========================== ###
 # champions = load_some_champs()
 # player1Champs = []
 # player2Champs = []

@@ -3,6 +3,16 @@ import socket
 from champlistloader import load_some_champs
 import json
 
+class ProcessData:
+    # class variables
+    process_id = 0 
+    project_id = 1
+
+    def __init__(self):
+        # instance variables
+        self.task_id = 2
+        self.start_time = 3
+
 DatabaseSideSocket = socket.socket()
 host = '127.0.0.1'
 port = 5555
