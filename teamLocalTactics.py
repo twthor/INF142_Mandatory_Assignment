@@ -1,6 +1,8 @@
+from copyreg import pickle
 from rich import print
 from rich.prompt import Prompt
 from rich.table import Table
+import pickle
 
 from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
@@ -45,6 +47,22 @@ def input_champion(prompt: str,
                 player1.append(name)
                 break
 
+def valid_champion(userInput: str,
+                   champions: dict[Champion],
+                   player1: list[str],
+                   player2: list[str]) -> None:
+
+    # Prompt the player to choose a champion and provide the reason why
+    # certain champion cannot be selected. Returns userinput if champion is valid.
+    while True:
+        if userInput not in champions:
+            return (f'The champion {userInput} is not available. Try again.')
+        if userInput in player1:
+            return (f'{userInput} is already in your team. Try again.')
+        if userInput in player2:
+            return(f'{userInput} is in the enemy team. Try again.')
+        else:
+            return userInput
 
 def print_match_summary(match: Match) -> None:
 
@@ -54,6 +72,7 @@ def print_match_summary(match: Match) -> None:
         Shape.SCISSORS: ':victory_hand-emoji:'
     }
 
+    list = []
     # For each round print a table with the results
     for index, round in enumerate(match.rounds):
 
@@ -73,21 +92,26 @@ def print_match_summary(match: Match) -> None:
             red, blue = key.split(', ')
             round_summary.add_row(f'{red} {EMOJI[round[key].red]}',
                                   f'{blue} {EMOJI[round[key].blue]}')
-        print(round_summary)
-        print('\n')
-
+        
+        list.append(round_summary)
+        # return round_summary
     # Print the score
     red_score, blue_score = match.score
     print(f'Red: {red_score}\n'
           f'Blue: {blue_score}')
+    # list.append(red_score)
+    # list.append(blue_score)
+    print(list)
+    return list
 
+def team_score(red_score, blue_score):
     # Print the winner
     if red_score > blue_score:
-        print('\n[red]Red victory! :grin:')
+        return('\n[red]Red victory! :grin:')
     elif red_score < blue_score:
-        print('\n[blue]Blue victory! :grin:')
+        return('\n[blue]Blue victory! :grin:')
     else:
-        print('\nDraw :expressionless:')
+        return('\nDraw :expressionless:')
 
 
 def welcomeMessage():
@@ -97,26 +121,14 @@ def welcomeMessage():
           'Each player choose a champion each time.'
           '\n')
 
-# # Champion selection
-# def choose_champions():
-#     champions = load_some_champs()
-#     player1 = []
-#     player2 = []
-
-#     # player 1
-#     while True:
-        # input_champion('Player 1', 'red', champions, player1, player2)
-#         # player 2
-#         while True:
-            #input_champion('Player 2', 'blue', champions, player2, player1)
-#             # player 1
-#             while True:
-                # input_champion('Player 1', 'red', champions, player1, player2)
-#                 # player 2
-#                 while True:
-                    #input_champion('Player 2', 'blue', champions, player2, player1)
-
-    
+def match(player1, player2):
+    champions = load_some_champs()
+    match = Match(
+        Team([champions[name] for name in player1]),
+        Team([champions[name] for name in player2])
+    )
+    match.play()
+    return print_match_summary(match)
 
 
 def main() -> None:
