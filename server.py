@@ -45,7 +45,22 @@ def multi_threaded_client():
             c.sendall(game_start)
             send_champs = load_champions()
             c.sendall(send_champs)
-    # Server receiving picked champions:
+        # Server receiving picked champions:
+        # while true
+        clients[0].sendall("[red] Player 1")
+        choice = pickle.loads(clients[0].recv(4096))
+
+        clients[1].sendall("[blue] Player 2")
+        choice = pickle.loads(clients[1].recv(4096))
+
+        clients[0].sendall("[red] Player 1")
+        choice = pickle.loads(clients[0].recv(4096))
+
+        clients[1].sendall("[blue] Player 2")
+        choice = pickle.loads(clients[1].recv(4096))
+        
+
+
         for _ in range(2):
             for i in range(2):
                 list = ["red", "blue"]
