@@ -1,6 +1,5 @@
 # Server side of TNT
-from importlib.resources import path
-from msilib import datasizemask
+import pickle
 from socket import create_server
 import socket
 from zoneinfo import available_timezones
@@ -8,8 +7,10 @@ from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
 import teamLocalTactics
 from threading import Thread
-import json
 from _thread import *
+from rich import print
+from rich.prompt import Prompt
+from rich.table import Table
 
 # You can create a protocol on the serverside that handles the inputs.
 
@@ -21,24 +22,21 @@ from _thread import *
 # db_sock = socket.socket()
 # db_sock.connect(('localhost', 5555))
 def getChamps():
-    db_sock = socket.socket()
-    db_sock.connect(('localhost', 5555))
-    data_encoded = db_sock.recv(4096)
-
-    data_string = data_encoded.decode(encoding="utf-8")
-    data_variable = json.loads(data_string)
-    
-    db_sock.close()
-    return data_variable
-
-class ProcessData:
-    process_id = 0
-    project_id = 0
-    task_id = 0
-    start_time = 0
-    end_time = 0
-    user_id = 0
-    weekend_id = 0
+    db_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host = '127.0.0.1'
+    port = 5555
+    try:
+        db_sock.connect((host, port))
+    except socket.error as e:
+        print(str(e))
+    print('>> Trying to fetch champions..')
+    while True:
+        champs_encoded = db_sock.recv(4096)
+        if not champs_encoded:
+            break
+        db_sock.close()
+        print(">> Server has received!")
+        return champs_encoded
 
 ServerSideSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1'
@@ -53,26 +51,56 @@ ServerSideSocket.listen(5)
 
 def multi_threaded_client(connection):
     #connection.send(str.encode('Server is working..'))
+    game_start = pickle.dumps(load_game())
+    connection.sendall(game_start)
+    send_champs = load_champions()
+    connection.sendall(send_champs)
+
     while True:
+        # Funker ikke. Funksjonen spør om input i server terminalen
+        # func_champs = pickle.dumps(teamLocalTactics.choose_champions())
+        # connection.sendall(func_champs)
+        # Pick champ:
+        for _ in range(4):
+            userInput = connection.recv(4096)
+            chose_champs(userInput, "red", player1, player2)
+            chose_champs(userInput, "red", player2, player1)
+            
         data_encoded = connection.recv(4096)
-        data_string = data_encoded.decode(encoding="utf-8")
+        wanted_champ = data_encoded.decode(encoding="utf-8")
+        chose_champs(wanted_champ)
         if not data_encoded:
             break
-        
-        variable = ProcessData()
-        data_as_dict = vars(variable)
-        # Serialize dict object
-        data_string = json.dumps(data_as_dict)
-        # Send encoded object
-        ServerSideSocket.send(data_string.encode(encoding="utf-8"))
+        if wanted_champ in load_some_champs():
+            print("Checking if valid champions")
+            teamLocalTactics.choose_champions(wanted_champ)
 
-        welcome = teamLocalTactics.welcomeMessage()
-        connection.sendall(str.encode(welcome))
-
-        # available_champs = getChamps()
-        # champions = json.loads(available_champs)
-        # connection.sendall(str.encode(champions))
     connection.close()
+
+def load_game():
+    # Så lenge de ikke receiver en connection, så vil koden kjøre.
+    # data_encoded = connection.recv(4096)
+    welcome = teamLocalTactics.welcomeMessage()
+    # return connection.sendall(str.encode(welcome))
+    return welcome
+
+def load_champions():
+    champs = getChamps()
+    return champs
+
+player1 = []
+player2 = []
+
+def chose_champs(userInput, color, player1, player2):
+    teamLocalTactics.input_champion(userInput, color, load_some_champs(), player1, player2)
+
+# def validChamp(userInput):
+
+# funket ikke å sende en prompt. Dukket opp på server side.
+def askForInput():
+    input = Prompt.ask(f"[red]Player 1")
+    userInput = pickle.dumps(input)
+    return userInput
 
 while True:
     Client, address = ServerSideSocket.accept()
@@ -81,6 +109,8 @@ while True:
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
 ServerSideSocket.close()
+
+
 
 #######=============== ALT UNDER HER ER DET GAMLE =========================== ###
 # champions = load_some_champs()

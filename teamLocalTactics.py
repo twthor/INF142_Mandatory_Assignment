@@ -6,7 +6,7 @@ from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
 
 
-def print_available_champs(champions: dict[Champion]) -> None:
+def print_available_champs(champions: dict[Champion]) -> Table:
 
     # Create a table containing available champions
     available_champs = Table(title='Available champions')
@@ -22,7 +22,7 @@ def print_available_champs(champions: dict[Champion]) -> None:
     for champion in champions.values():
         available_champs.add_row(*champion.str_tuple)
 
-    print(available_champs)
+    return available_champs
 
 
 def input_champion(prompt: str,
@@ -36,11 +36,11 @@ def input_champion(prompt: str,
     while True:
         match Prompt.ask(f'[{color}]{prompt}'):
             case name if name not in champions:
-                print(f'The champion {name} is not available. Try again.')
+                return (f'The champion {name} is not available. Try again.')
             case name if name in player1:
-                print(f'{name} is already in your team. Try again.')
+                return (f'{name} is already in your team. Try again.')
             case name if name in player2:
-                print(f'{name} is in the enemy team. Try again.')
+                return(f'{name} is in the enemy team. Try again.')
             case _:
                 player1.append(name)
                 break
@@ -96,6 +96,27 @@ def welcomeMessage():
           '\n'
           'Each player choose a champion each time.'
           '\n')
+
+# # Champion selection
+# def choose_champions():
+#     champions = load_some_champs()
+#     player1 = []
+#     player2 = []
+
+#     # player 1
+#     while True:
+        # input_champion('Player 1', 'red', champions, player1, player2)
+#         # player 2
+#         while True:
+            #input_champion('Player 2', 'blue', champions, player2, player1)
+#             # player 1
+#             while True:
+                # input_champion('Player 1', 'red', champions, player1, player2)
+#                 # player 2
+#                 while True:
+                    #input_champion('Player 2', 'blue', champions, player2, player1)
+
+    
 
 
 def main() -> None:
