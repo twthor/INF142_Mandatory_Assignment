@@ -36,6 +36,7 @@ def main():
             listFormat = pickle.loads(message_in)
             print(f"Red score {listFormat[3]}\nBlue score {listFormat[4]}")
             print(listFormat[5])
+            break
         champ_choice = input()
         message_out = pickle.dumps(champ_choice)
         clientMultiSocket.sendall(message_out)

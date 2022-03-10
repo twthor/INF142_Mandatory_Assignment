@@ -5,14 +5,14 @@ import pickle
 from time import sleep
 from threading import Lock
 from unittest import TestProgram
+from champlistloader import load_some_champs
 import teamLocalTactics
 from core import Champion
 
 # Declraing a lock
 lock = Lock()
 # threadCount = 0
-testPlayer1 = []
-testPlayer2 = []
+
 
 
 def get_champs():
@@ -42,11 +42,35 @@ def load_champions():
     champs = get_champs()
     return champs
 
-def run_match(player1, player2, conn):
+def select_champion(user: int, userInput: str,
+                   champions: dict[Champion],
+                   player1: list[str],
+                   player2: list[str]) -> None:
+
+    # Prompt the player to choose a champion and provide the reason why
+    # certain champion cannot be selected. Appends userinput to list if champion is valid.
+    clients[user].send(pickle.dumps(userInput))
+    while True:
+        client_message = clients[user].recv(4096)
+        client_message = pickle.loads(client_message)
+        # validate input
+        if client_message not in champions:
+            message = f'The champion {client_message} is not available. Try again.\n' + userInput
+        elif client_message in player1:
+            message = f'{client_message} is already in your team. Try again.\n' + userInput
+        elif client_message in player2:
+            message = f'{client_message} is in the enemy team. Try again.\n' + userInput
+        else:
+            player1.append(client_message)
+            break
+        clients[user].send(pickle.dumps(message))
+
+def run_match(player1, player2, conn1, conn2):
     match_results = teamLocalTactics.match(player1, player2)
     # match_results = pickle.dumps(match_results)
     results = pickle.dumps(match_results)
-    conn.sendall(results)
+    conn1.sendall(results)
+    conn2.sendall(results)
     
     print("test score server side", match_results[3:5])
 
@@ -54,11 +78,8 @@ def run_match(player1, player2, conn):
     score = teamLocalTactics.team_score(match_results[3], match_results[4])
     print("string server side ", score)
     score = pickle.dumps(score)
-    conn.sendall(score)
-
-def input_champion(player, color, champions, player1, player2):
-    pass
-        
+    conn1.sendall(score)
+    conn2.sendall(score)
 
 def multi_threaded_client(conn):
     conn.send(str.encode("Connected"))
@@ -81,46 +102,45 @@ def multi_threaded_client(conn):
             # acquire lock
             lock.acquire()
 
-            # player 1
-            #if conn == clients[0]:
-            player = f"[red] Player 1 > "
-            message = pickle.dumps(player)
-            clients[0].send(message)
-            client_message = clients[0].recv(4096)
-            print(pickle.loads(client_message))
+            # player = f"[red] Player 1 > "
+            # message = pickle.dumps(player)
+            # clients[0].send(message)
+            # client_message = clients[0].recv(4096)
+            # print(pickle.loads(client_message))
 
                 #player1 = f"[red] Player 1 chose: {pickle.loads(client_message)}"
                 #clients[1].send(pickle.dumps(player1))
 
             # player 2
-            #if conn == clients[1]:
-            player = f"[blue] Player {2} > "
-            message = pickle.dumps(player)
-            clients[1].send(message)
-            client_message = clients[1].recv(4096)
-            print(pickle.loads(client_message))
+
+            # player = f"[blue] Player {2} > "
+            # message = pickle.dumps(player)
+            # clients[1].send(message)
+            # client_message = clients[1].recv(4096)
+            # print(pickle.loads(client_message))
                 #player2 = f"[red] Player 2 chose: {pickle.loads(client_message)}"
                 #clients[1].send(pickle.dumps(player2))
 
-            #teamLocalTactics.input_champion
-            #player1 = []
-            #player2 = []    
-            #input_champion('Player 1', 'red', champions, player1, player2)
-            #input_champion('Player 2', 'blue', champions, player2, player1)
+            champions = load_some_champs()
+
+            # players select their champions
+            select_champion(0, '[red] Player 1 > ', champions, player1, player2)
+            select_champion(1, '[blue] Player 2 > ', champions, player2, player1)
 
             lock.release()
+            
+            # dict over champs
 
-            #select_champion(champs)
             
             #Lister er over funksjonen
-            testPlayer1.append("Twist")
-            testPlayer2.append("Siva")
-            print(testPlayer1, len(testPlayer1))
-            print(testPlayer2, len(testPlayer2))
-            # if conn == clients[0]:
+            # player1.append("Twist")
+            # player2.append("Siva")
+            print(player1, len(player1))
+            print(player2, len(player2))
             while True:
-                if len(testPlayer1) == 2 and len(testPlayer2) == 2:
-                    run_match(testPlayer1, testPlayer2, conn) # conn 1 og conn 2
+                    if len(player1) == 2 and len(player2) == 2:
+                        if conn == clients[1]:
+                            run_match(player1, player2, clients[0], clients[1]) # conn 1 og conn 2
                     break
             break
     #conn.close()
@@ -144,6 +164,10 @@ def main():
     threadCount = 0
     global clients
     clients = []
+    global player1
+    player1 = []
+    global player2
+    player2 = []
     
     while True:
         conn, addr = serverSideSocket.accept()
