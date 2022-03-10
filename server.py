@@ -11,9 +11,6 @@ from core import Champion
 
 # Declraing a lock
 lock = Lock()
-# threadCount = 0
-
-
 
 def get_champs():
     db_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -102,25 +99,6 @@ def multi_threaded_client(conn):
             # acquire lock
             lock.acquire()
 
-            # player = f"[red] Player 1 > "
-            # message = pickle.dumps(player)
-            # clients[0].send(message)
-            # client_message = clients[0].recv(4096)
-            # print(pickle.loads(client_message))
-
-                #player1 = f"[red] Player 1 chose: {pickle.loads(client_message)}"
-                #clients[1].send(pickle.dumps(player1))
-
-            # player 2
-
-            # player = f"[blue] Player {2} > "
-            # message = pickle.dumps(player)
-            # clients[1].send(message)
-            # client_message = clients[1].recv(4096)
-            # print(pickle.loads(client_message))
-                #player2 = f"[red] Player 2 chose: {pickle.loads(client_message)}"
-                #clients[1].send(pickle.dumps(player2))
-
             champions = load_some_champs()
 
             # players select their champions
@@ -129,12 +107,6 @@ def multi_threaded_client(conn):
 
             lock.release()
             
-            # dict over champs
-
-            
-            #Lister er over funksjonen
-            # player1.append("Twist")
-            # player2.append("Siva")
             print(player1, len(player1))
             print(player2, len(player2))
             while True:

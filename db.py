@@ -10,7 +10,7 @@ from rich import print
 from rich.prompt import Prompt
 from rich.table import Table
 
-
+# Socket information
 DatabaseSideSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1'
 port = 5555
@@ -22,6 +22,7 @@ except socket.error as e:
 print(">> Database is listening.. <<")
 DatabaseSideSocket.listen(5)
 
+# Extra task for assignment, not finished.
 def addChamps(newChampion: str):
     with open("some_champs.txt", 'a') as f:
         f.write('\n')
@@ -29,10 +30,8 @@ def addChamps(newChampion: str):
     return "Champion added!"
 
 def load_champs():
-    # data_encoded = connection.recv(4096)
     dictChamps = load_some_champs()
     champs = print_available_champs(dictChamps)
-    # return connection.sendall(str.encode(welcome))
     return champs
 
 def multi_threaded_client(connection):
@@ -49,10 +48,6 @@ def multi_threaded_client(connection):
 # aswell as store match history to a .txt file
 
 while True:
-    # serverSock, address = DatabaseSideSocket.accept()
-    # championDict = load_some_champs()
-    # serialized_results = json.dumps(championDict)
-    # serverSock.send(serialized_results.encode())
     Client, address = DatabaseSideSocket.accept()
     print('Connected to: ' + address[0] + ':' + str(address[1]))
     start_new_thread(multi_threaded_client, (Client, ))
