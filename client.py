@@ -2,6 +2,8 @@
 import socket
 import pickle
 from rich import print
+
+from champlistloader import load_some_champs
 #from rich.table import Table
 
 def main():
@@ -27,6 +29,13 @@ def main():
         if not message_in:
             break
         print(pickle.loads(message_in), end='')
+        # If message received in client is a table or not.
+        if type(pickle.loads(message_in)) == list:
+            for table in pickle.loads(message_in)[:3]:
+                print(table, end='')
+            listFormat = pickle.loads(message_in)
+            print(f"Red score {listFormat[3]}\nBlue score {listFormat[4]}")
+            print(listFormat[5])
         champ_choice = input()
         message_out = pickle.dumps(champ_choice)
         clientMultiSocket.sendall(message_out)

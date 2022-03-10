@@ -99,8 +99,9 @@ def print_match_summary(match: Match) -> None:
     red_score, blue_score = match.score
     print(f'Red: {red_score}\n'
           f'Blue: {blue_score}')
-    # list.append(red_score)
-    # list.append(blue_score)
+    list.append(red_score)
+    list.append(blue_score)
+    list.append(team_score(red_score, blue_score))
     print(list)
     return list
 

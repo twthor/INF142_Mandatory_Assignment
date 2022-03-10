@@ -4,11 +4,16 @@ from _thread import *
 import pickle
 from time import sleep
 from threading import Lock
+from unittest import TestProgram
 import teamLocalTactics
 from core import Champion
 
 # Declraing a lock
 lock = Lock()
+# threadCount = 0
+testPlayer1 = []
+testPlayer2 = []
+
 
 def get_champs():
     db_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,59 +42,19 @@ def load_champions():
     champs = get_champs()
     return champs
 
-"""
-
-def chose_champs(userInput, connection):
-    if clients[0] == connection:
-        # fiks valid champ
-        # teamLocalTactics.valid_champion(userInput, load_some_champs(), player1, player2)
-        player1.append(userInput)
-    elif clients[1] == connection:
-        # teamLocalTactics.valid_champion(userInput, load_some_champs(), player2, player1)
-        player2.append(userInput)
-
-def valid_champion(userInput: str,
-                   champions: dict[Champion],
-                   player1: list[str],
-                   player2: list[str]) -> None:
-
-    # Prompt the player to choose a champion and provide the reason why
-    # certain champion cannot be selected. Returns userinput if champion is valid.
-    while True:
-        if userInput not in champions:
-             (f'The champion {userInput} is not available. Try again.')
-        if userInput in player1:
-            return (f'{userInput} is already in your team. Try again.')
-        if userInput in player2:
-            return(f'{userInput} is in the enemy team. Try again.')
-        else:
-            return userInput
-
-def run_match(player1, player2, connection):
+def run_match(player1, player2, conn):
     match_results = teamLocalTactics.match(player1, player2)
     # match_results = pickle.dumps(match_results)
-    for result in match_results:
-        result = pickle.dumps(result)
-        # connection.send(result)
-    # lastTable = pickle.dumps(match_results[:-1])
-    # connection.send(lastTable)
-    # return match_results
+    results = pickle.dumps(match_results)
+    conn.sendall(results)
+    
+    print("test score server side", match_results[3:5])
 
-def select_champion(champions):
-    while True:
-        player = "[red] Player 1"
-        message = pickle.dumps(player)
-        clients[0].sendall(message)
-
-        '''userInput = clients[0].recv(4096)
-        if userInput not in champions:
-            return (f'The champion {userInput} is not available. Try again.')
-        if userInput in player1:
-            return (f'{userInput} is already in your team. Try again.')
-        if userInput in player2:
-            return(f'{userInput} is in the enemy team. Try again.')
-        else:
-            return userInput'''"""
+    # red score, blue score
+    score = teamLocalTactics.team_score(match_results[3], match_results[4])
+    print("string server side ", score)
+    score = pickle.dumps(score)
+    conn.sendall(score)
 
 def input_champion(player, color, champions, player1, player2):
     pass
@@ -123,6 +88,7 @@ def multi_threaded_client(conn):
             clients[0].send(message)
             client_message = clients[0].recv(4096)
             print(pickle.loads(client_message))
+
                 #player1 = f"[red] Player 1 chose: {pickle.loads(client_message)}"
                 #clients[1].send(pickle.dumps(player1))
 
@@ -145,11 +111,17 @@ def multi_threaded_client(conn):
             lock.release()
 
             #select_champion(champs)
-            '''
-            print("player1 ", player1)
-            print("player2 ", player2)
-            run_match(player1, player2)'''
-
+            
+            #Lister er over funksjonen
+            testPlayer1.append("Twist")
+            testPlayer2.append("Siva")
+            print(testPlayer1, len(testPlayer1))
+            print(testPlayer2, len(testPlayer2))
+            # if conn == clients[0]:
+            while True:
+                if len(testPlayer1) == 2 and len(testPlayer2) == 2:
+                    run_match(testPlayer1, testPlayer2, conn) # conn 1 og conn 2
+                    break
             break
     #conn.close()
 
@@ -166,13 +138,13 @@ def main():
     # only want two people to connect the server
     serverSideSocket.listen(2)
     print(">> Server is listening.. <<")
-
-    # global variables 
+   
+    # Globals
     global threadCount
-    global clients
     threadCount = 0
+    global clients
     clients = []
-
+    
     while True:
         conn, addr = serverSideSocket.accept()
         print('Connected to: ' + addr[0] + ':' + str(addr[1]))
