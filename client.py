@@ -1,60 +1,41 @@
 # Client side of TNT
-import json
-import pickle
 import socket
-import teamLocalTactics
-from champlistloader import load_some_champs
-from threading import Thread
+import pickle
 from rich import print
-from rich.prompt import Prompt
-from rich.table import Table
+#from rich.table import Table
 
+def main():
+    # initiate client socket and connect to server
+    clientMultiSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host = '127.0.0.1'
+    port = 5550
+    print('>> Waiting for connection response..')
+    try:
+        clientMultiSocket.connect((host, port))
+        print(clientMultiSocket.recv(4096).decode())
+    except socket.error as e:
+        print(str(e))
 
-ClientMultiSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = '127.0.0.1'
-port = 5550
-print('>> Waiting for connection response..')
-try:
-    ClientMultiSocket.connect((host, port))
-except socket.error as e:
-    print(str(e))
+    # at the beginning of the game the client will receive a welcome message and a list over the champions
+    for _ in range(2):
+        message = clientMultiSocket.recv(4096)
+        print(pickle.loads(message))
 
-def choose_champ(prompt: str, color: str):
-    Prompt.ask(f'[{color}]{prompt}')
+    # interact with the server 
+    while True:
+        message_in = clientMultiSocket.recv(4096)
+        if not message_in:
+            break
+        print(pickle.loads(message_in), end='')
+        champ_choice = input()
+        message_out = pickle.dumps(champ_choice)
+        clientMultiSocket.sendall(message_out)
 
-# Champion selection
-# def choose_champions():
-#     # player 1
-#     while True:
-#         # player1Choice = Prompt.ask('[red]Player 1')
-#         sendChoice = pickle.dumps(player1Choice)
-#         ClientMultiSocket.send(sendChoice)
-#         # player 2
-#         while True:
-#             # player2Choice = Prompt.ask('[blue]Player 1')
-#             sendChoice = pickle.dumps(player2Choice)
-#             ClientMultiSocket.send(sendChoice)
-#             break
-#         break
+    clientMultiSocket.close()
 
-# When starting the game, client receives the welcome message and champion list.
-for _ in range(2):
-    res = ClientMultiSocket.recv(4096)
-    decoded = pickle.loads(res)
-    print(decoded)
+        #if type(decoded) == list:
+        #    for table in decoded:
+        #        print(table)
 
-# Loop for interacting with the server after received the first to packets^
-while True:
-    res = ClientMultiSocket.recv(4096)
-    if not res:
-        break
-    decoded = pickle.loads(res)
-    print(decoded)
-    choice = input()
-    choice = pickle.dumps(choice)
-    ClientMultiSocket.send(choice)
-    if type(decoded) == list:
-        for table in decoded:
-            print(table)
-
-ClientMultiSocket.close()
+if __name__=="__main__":
+    main()
