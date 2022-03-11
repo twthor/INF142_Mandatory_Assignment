@@ -1,9 +1,6 @@
 from core import Champion
-import pymongo
-from pymongo import MongoClient
 from dotenv import load_dotenv
 load_dotenv()
-import os
 
 def _parse_champ(champ_text: str) -> Champion:
     name, rock, paper, scissors = champ_text.split(sep=',')
