@@ -25,7 +25,6 @@ def main():
         message_in = clientMultiSocket.recv(4096)
         if not message_in:
             break
-        print(pickle.loads(message_in), end='')
 
         # If message received in client is a table or not.
         if type(pickle.loads(message_in)) == list:
@@ -35,6 +34,7 @@ def main():
             print(f"Red score {listFormat[3]}\nBlue score {listFormat[4]}")
             print(listFormat[5])
             break
+        print(pickle.loads(message_in), end='')
         champ_choice = input()
         message_out = pickle.dumps(champ_choice)
         clientMultiSocket.sendall(message_out)
