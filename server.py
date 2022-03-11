@@ -5,7 +5,7 @@ import pickle
 from time import sleep
 from threading import Lock
 from champlistloader import load_some_champs
-import teamLocalTactics
+import teamNetworkTactics
 from core import Champion
 
 # Declraing a lock
@@ -31,7 +31,7 @@ def get_champs():
         return champs_encoded
 
 def load_game():
-    welcome = teamLocalTactics.welcomeMessage()
+    welcome = teamNetworkTactics.welcomeMessage()
     return welcome
 
 def load_champions():
@@ -62,13 +62,13 @@ def select_champion(user: int, userInput: str,
         clients[user].send(pickle.dumps(message))
 
 def run_match(player1, player2, conn1, conn2):
-    match_results = teamLocalTactics.match(player1, player2)
+    match_results = teamNetworkTactics.match(player1, player2)
     results = pickle.dumps(match_results)
     conn1.sendall(results)
     conn2.sendall(results)
     
     # red score, blue score
-    score = teamLocalTactics.team_score(match_results[3], match_results[4])
+    score = teamNetworkTactics.team_score(match_results[3], match_results[4])
     score = pickle.dumps(score)
     conn1.sendall(score)
     conn2.sendall(score)

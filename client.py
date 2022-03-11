@@ -3,9 +3,6 @@ import socket
 import pickle
 from rich import print
 
-from champlistloader import load_some_champs
-#from rich.table import Table
-
 def main():
     # initiate client socket and connect to server
     clientMultiSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +26,7 @@ def main():
         if not message_in:
             break
         print(pickle.loads(message_in), end='')
-        
+
         # If message received in client is a table or not.
         if type(pickle.loads(message_in)) == list:
             for table in pickle.loads(message_in)[:3]:

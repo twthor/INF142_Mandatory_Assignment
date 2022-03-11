@@ -1,14 +1,9 @@
-from inspect import getcallargs
 import pickle
-from threading import Thread
 import socket
 from champlistloader import load_some_champs
-from teamLocalTactics import *
-import json
+from teamNetworkTactics import *
 from _thread import *
 from rich import print
-from rich.prompt import Prompt
-from rich.table import Table
 
 # Socket information
 DatabaseSideSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -35,9 +30,7 @@ def load_champs():
     return champs
 
 def multi_threaded_client(connection):
-    #connection.send(str.encode('Server is working..'))
     while True:
-        # res = connection.recv(4096)
         get_champs = load_champs()
         encode_champs = pickle.dumps(get_champs)
         print("> Sending champs to server.. ")
@@ -45,7 +38,6 @@ def multi_threaded_client(connection):
         connection.close()
         print("> Sent!")
         break
-# aswell as store match history to a .txt file
 
 while True:
     Client, address = DatabaseSideSocket.accept()
@@ -53,4 +45,3 @@ while True:
     start_new_thread(multi_threaded_client, (Client, ))
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
-    
