@@ -19,7 +19,8 @@ TNT needs at least three processes that communicates oves the Internet:
 The three processes needs to run without any isolation and in the same device using local host. It should also allow for patching champions (changes to champions stats, nerfs/buffs) while still allowing players to play the game. 
 
 ### Architecture example:
-![image](https://user-images.githubusercontent.com/92455258/157851960-e50dc711-dd18-40d4-99ec-dbca36fdf42d.png)
+![image](https://user-images.githubusercontent.com/92455258/157852080-dcdb0f6f-22d4-4fea-97b6-cf7e47978ad3.png)
+
 
 ## MVP requirements:
   • It consists of at least three Python scripts, one for each of the aforementioned
