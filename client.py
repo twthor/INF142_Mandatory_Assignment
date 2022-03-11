@@ -29,6 +29,7 @@ def main():
         if not message_in:
             break
         print(pickle.loads(message_in), end='')
+        
         # If message received in client is a table or not.
         if type(pickle.loads(message_in)) == list:
             for table in pickle.loads(message_in)[:3]:
@@ -42,10 +43,6 @@ def main():
         clientMultiSocket.sendall(message_out)
 
     clientMultiSocket.close()
-
-        #if type(decoded) == list:
-        #    for table in decoded:
-        #        print(table)
 
 if __name__=="__main__":
     main()

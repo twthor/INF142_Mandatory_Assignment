@@ -1,12 +1,7 @@
-from copyreg import pickle
 from rich import print
-from rich.prompt import Prompt
 from rich.table import Table
-import pickle
-
 from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
-
 
 def print_available_champs(champions: dict[Champion]) -> Table:
 
@@ -26,26 +21,6 @@ def print_available_champs(champions: dict[Champion]) -> Table:
 
     return available_champs
 
-
-def input_champion(prompt: str,
-                   color: str,
-                   champions: dict[Champion],
-                   player1: list[str],
-                   player2: list[str]) -> None:
-
-    # Prompt the player to choose a champion and provide the reason why
-    # certain champion cannot be selected
-    while True:
-        match Prompt.ask(f'[{color}]{prompt}'):
-            case name if name not in champions:
-                return (f'The champion {name} is not available. Try again.')
-            case name if name in player1:
-                return (f'{name} is already in your team. Try again.')
-            case name if name in player2:
-                return(f'{name} is in the enemy team. Try again.')
-            case _:
-                player1.append(name)
-                break
 
 def valid_champion(userInput: str,
                    champions: dict[Champion],
@@ -102,7 +77,6 @@ def print_match_summary(match: Match) -> None:
     list.append(red_score)
     list.append(blue_score)
     list.append(team_score(red_score, blue_score))
-    print(list)
     return list
 
 def team_score(red_score, blue_score):
@@ -130,40 +104,3 @@ def match(player1, player2):
     )
     match.play()
     return print_match_summary(match)
-
-
-def main() -> None:
-
-    print('\n'
-          'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!'
-          '\n'
-          'Each player choose a champion each time.'
-          '\n')
-
-    champions = load_some_champs()
-    print_available_champs(champions)
-    print('\n')
-
-    player1 = []
-    player2 = []
-
-    # Champion selection
-    for _ in range(2):
-        input_champion('Player 1', 'red', champions, player1, player2)
-        input_champion('Player 2', 'blue', champions, player2, player1)
-
-    print('\n')
-
-    # Match
-    match = Match(
-        Team([champions[name] for name in player1]),
-        Team([champions[name] for name in player2])
-    )
-    match.play()
-
-    # Print a summary
-    print_match_summary(match)
-
-
-if __name__ == '__main__':
-    main()

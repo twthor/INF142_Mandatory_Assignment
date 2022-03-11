@@ -4,7 +4,6 @@ from _thread import *
 import pickle
 from time import sleep
 from threading import Lock
-from unittest import TestProgram
 from champlistloader import load_some_champs
 import teamLocalTactics
 from core import Champion
@@ -64,16 +63,12 @@ def select_champion(user: int, userInput: str,
 
 def run_match(player1, player2, conn1, conn2):
     match_results = teamLocalTactics.match(player1, player2)
-    # match_results = pickle.dumps(match_results)
     results = pickle.dumps(match_results)
     conn1.sendall(results)
     conn2.sendall(results)
     
-    print("test score server side", match_results[3:5])
-
     # red score, blue score
     score = teamLocalTactics.team_score(match_results[3], match_results[4])
-    print("string server side ", score)
     score = pickle.dumps(score)
     conn1.sendall(score)
     conn2.sendall(score)
@@ -107,15 +102,14 @@ def multi_threaded_client(conn):
 
             lock.release()
             
-            print(player1, len(player1))
-            print(player2, len(player2))
+            # print(player1, len(player1))
+            # print(player2, len(player2))
             while True:
                     if len(player1) == 2 and len(player2) == 2:
                         if conn == clients[1]:
                             run_match(player1, player2, clients[0], clients[1]) # conn 1 og conn 2
                     break
             break
-    #conn.close()
 
 def main():
     # create server socket
@@ -133,12 +127,12 @@ def main():
    
     # Globals
     global threadCount
-    threadCount = 0
     global clients
-    clients = []
     global player1
-    player1 = []
     global player2
+    threadCount = 0
+    clients = []
+    player1 = []
     player2 = []
     
     while True:
@@ -148,9 +142,6 @@ def main():
         start_new_thread(multi_threaded_client, (conn, ))
         threadCount += 1
         print('Thread Number: ' + str(threadCount))
-
-    #ServerSideSocket.close()
-
 
 if __name__=="__main__":
     main()
